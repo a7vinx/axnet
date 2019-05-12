@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include "pollfd.hh"
 #include "eventloop.hh"
 #include "util/log.hh"
@@ -11,7 +13,7 @@ PollFd::~PollFd() {
 
 void PollFd::HandleEvent() {
     event_handling_ = true;
-    LOG_INFO << "Handle event: " << EventsToStr(revents_) << "on fd: " << fd_;
+    LOG_INFO << "Handle event: " << EventsToStr() << "on fd: " << fd_;
     if (revents_ & EPOLLERR) {
         if (err_cb_) err_cb_();
     }

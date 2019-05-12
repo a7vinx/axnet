@@ -23,6 +23,8 @@ public:
     int Fd() const { return fd_; }
     int Events() const { return events_; }
     void SetRevents(int revents) { revents_ = revents; }
+    std::string EventsToStr() const { return EventsToStr(events_); }
+    std::string ReventsToStr() const { return EventsToStr(revents_); }
 
     // Event switchers.
     void EnableReading() { events_ |= kETRead; NotifyLoop(); }
