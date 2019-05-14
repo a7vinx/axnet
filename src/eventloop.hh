@@ -4,6 +4,8 @@
 #include <vector>
 #include <thread>
 #include <memory>
+#include <functional>
+#include <mutex>
 #include <boost/core/noncopyable.hpp>
 
 namespace axs {
@@ -14,6 +16,8 @@ class Poller;
 
 class EventLoop : private boost::noncopyable {
 public:
+    using Functor = std::function<void()>;
+
     EventLoop();
 
     // Trivial getters/setters.
@@ -22,6 +26,10 @@ public:
 
     // Non-trivial member functions.
     void Loop();
+    void RunInLoop(Functor f);
+    void QueueInLoop(Functor f);
+
+    // Helpers.
     bool IsInLoopThread() const {
         return std::this_thread::get_id() == thread_id_; }
     void AssertInLoopThread();
@@ -30,14 +38,23 @@ public:
 
 private:
     void HandleEvents();
+    void DoPendingTasks();
+    void Wakeup();
+    void HandleWakeupFdReading();
 
     std::thread::id thread_id_;
+    // Use unique_ptr to reduce header dependencies.
     std::unique_ptr<Poller> pollerp_;
     std::vector<PollFd*> ready_fds_{};
     PollFd* cur_handling_fd_{nullptr};
     int poll_timeout_{10000};
     bool quit_{false};
     bool event_handling_{false};
+    // Variables for pending tasks.
+    mutable std::mutex pending_tasks_mutex_{};
+    std::vector<Functor> pending_tasks_{};
+    std::unique_ptr<PollFd> wakeup_fdp_;
+    bool doing_pending_tasks_{false};
 };
 
 }
