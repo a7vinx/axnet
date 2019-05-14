@@ -42,6 +42,12 @@ EventLoop::EventLoop()
     wakeup_fdp_->EnableReading();
 }
 
+EventLoop::~EventLoop() {
+    LOG_INFO << "EventLoop(" << this << ") Destructs";
+    wakeup_fdp_->RemoveFromLoop();
+    tlocal_loop = nullptr;
+}
+
 void EventLoop::Loop() {
     while (!quit_) {
         ready_fds_ = pollerp_->Poll(poll_timeout_);

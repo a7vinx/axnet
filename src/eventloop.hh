@@ -19,6 +19,7 @@ public:
     using Functor = std::function<void()>;
 
     EventLoop();
+    ~EventLoop();
 
     // Trivial getters/setters.
     void SetPollTimeOut(int timeout) { poll_timeout_ = timeout; }
