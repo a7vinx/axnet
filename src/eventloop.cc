@@ -1,5 +1,9 @@
+#include <algorithm>
+#include <cassert>
+
 #include "eventloop.hh"
 #include "poller.hh"
+#include "pollfd.hh"
 #include "util/log.hh"
 
 namespace axs {
@@ -21,6 +25,11 @@ EventLoop::EventLoop()
 }
 
 void EventLoop::Loop() {
+    while (!quit_) {
+        ready_fds_ = pollerp_->Poll(poll_timeout_);
+        HandleEvents();
+        ready_fds_.clear();
+    }
 }
 
 void EventLoop::AssertInLoopThread() {
@@ -37,7 +46,23 @@ void EventLoop::UpdatePollFd(PollFd* fdp) {
 
 void EventLoop::RemovePollFd(PollFd* fdp) {
     AssertInLoopThread();
+    // Allow the fd to remove itself and other unready fds.
+    if (event_handling_) {
+        assert(fdp == cur_handling_fd_ ||
+               std::find(ready_fds_.cbegin(), ready_fds_.cend(), fdp)
+                   == ready_fds_.cend());
+    }
     pollerp_->RemoveFd(fdp);
+}
+
+void EventLoop::HandleEvents() {
+    event_handling_ = true;
+    for (const auto& fdp : ready_fds_) {
+        cur_handling_fd_ = fdp;
+        fdp->HandleEvent();
+    }
+    cur_handling_fd_ = nullptr;
+    event_handling_ = false;
 }
 
 }
