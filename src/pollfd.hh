@@ -61,6 +61,7 @@ private:
     EventCallback write_cb_{};
     EventCallback err_cb_{};
     bool event_handling_{false};
+    bool is_in_loop{false};
 };
 
 }

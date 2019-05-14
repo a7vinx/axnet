@@ -8,6 +8,7 @@ namespace axs {
 
 PollFd::~PollFd() {
     assert(!event_handling_);
+    assert(!is_in_loop);
     ::close(fd_);
 }
 
@@ -29,9 +30,15 @@ void PollFd::HandleEvent() {
 }
 
 void PollFd::RemoveFromLoop() {
+    loop_.AssertInLoopThread();
+    is_in_loop = false;
+    loop_.RemovePollFd(this);
 }
 
 void PollFd::NotifyLoop() {
+    loop_.AssertInLoopThread();
+    is_in_loop = true;
+    loop_.UpdatePollFd(this);
 }
 
 std::string PollFd::EventsToStr(int events) {

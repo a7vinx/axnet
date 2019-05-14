@@ -22,8 +22,8 @@ public:
         ::close(epfd_);
     }
     std::vector<PollFd*> Poll(int timeout);
-    void UpdateFd(PollFd* fd);
-    void RemoveFd(PollFd* fd);
+    void UpdateFd(PollFd* fdp);
+    void RemoveFd(PollFd* fdp);
 
 private:
     static std::string EpollOpToStr(int op);
