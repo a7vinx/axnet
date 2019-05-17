@@ -6,6 +6,7 @@
 #include <memory>
 #include <functional>
 #include <mutex>
+#include <atomic>
 #include <boost/core/noncopyable.hpp>
 
 namespace axs {
@@ -49,13 +50,14 @@ private:
     std::vector<PollFd*> ready_fds_{};
     PollFd* cur_handling_fd_{nullptr};
     int poll_timeout_{10000};
-    bool quit_{false};
-    bool event_handling_{false};
+    // Actually whether to use atomic bool does not affect the correctness.
+    std::atomic_bool quit_{false};
+    std::atomic_bool event_handling_{false};
     // Variables for pending tasks.
     mutable std::mutex pending_tasks_mutex_{};
     std::vector<Functor> pending_tasks_{};
     std::unique_ptr<PollFd> wakeup_fdp_;
-    bool doing_pending_tasks_{false};
+    std::atomic_bool doing_pending_tasks_{false};
 };
 
 }
