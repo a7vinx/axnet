@@ -1,3 +1,4 @@
+#include <cstring>
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
 #include <boost/log/core.hpp>
@@ -44,6 +45,11 @@ log::formatting_ostream& operator<<(
 
 void LogFlush() {
     log::core::get()->flush();
+}
+
+const char* StrError(int err_num) {
+    static thread_local char strerr_buf[512];
+    return strerror_r(err_num, strerr_buf, sizeof(strerr_buf));
 }
 
 namespace {

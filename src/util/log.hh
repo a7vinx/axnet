@@ -25,5 +25,8 @@ extern boost::log::sources::severity_logger_mt<SevLevel>& axs_logger;
 
 void LogFlush();
 
+// Wrapper of strerror_r().
+const char* StrError(int err_num);
+
 }
 #endif
