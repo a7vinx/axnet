@@ -12,7 +12,7 @@ Acceptor::Acceptor(EventLoop& loop, const InetAddr& addr)
     sk_op_.SetReuseAddr(true);
     sk_op_.SetReusePort(true);
     sk_op_.Bind(addr);
-    poll_fd_.SetReadingCallback([&](){ HandleAccept(); });
+    poll_fd_.SetReadCallback([&](){ HandleAccept(); });
 }
 
 Acceptor::~Acceptor() {
