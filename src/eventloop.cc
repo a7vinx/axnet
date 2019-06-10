@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cerrno>
 #include <cstdint>
+#include <boost/format.hpp>
 #include <sys/eventfd.h>
 #include <unistd.h>
 
@@ -33,8 +34,8 @@ EventLoop::EventLoop()
       wakeup_fdp_{std::make_unique<PollFd>(*this, EventFd())} {
     LOG_INFO << "EventLoop(" << this << ") Created";
     if (tlocal_loop != nullptr) {
-        LOG_FATAL << "Thread(" << thread_id_ << ") already has an EventLoop("
-                  << tlocal_loop << ")";
+        LOG_FATAL << "Thread(" << boost::format("%#018x") % thread_id_
+                  << ") already has an EventLoop(" << tlocal_loop << ")";
     } else {
         tlocal_loop = this;
     }
@@ -60,8 +61,10 @@ void EventLoop::Loop() {
 void EventLoop::AssertInLoopThread() {
     if (!IsInLoopThread())
         LOG_FATAL << "EventLoop::AssertInLoopThread() Failed - "
-                  << "The thread id of EventLoop: " << thread_id_
-                  << " Current thread id: " << std::this_thread::get_id();
+                  << "The thread id of EventLoop: "
+                  << boost::format("%#018x") % thread_id_
+                  << " Current thread id: "
+                  << boost::format("%#018x") % std::this_thread::get_id();
 }
 
 void EventLoop::UpdatePollFd(PollFd* fdp) {
