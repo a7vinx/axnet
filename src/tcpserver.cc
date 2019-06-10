@@ -5,6 +5,7 @@
 #include "tcpconn.hh"
 #include "acceptor.hh"
 #include "eventloop.hh"
+#include "eventloop_pool.hh"
 #include "inetaddr.hh"
 #include "util/log.hh"
 
@@ -15,6 +16,7 @@ using std::placeholders::_2;
 
 TcpServer::TcpServer(EventLoop& loop, const InetAddr& addr)
     : loop_{loop},
+      loop_poolp_{std::make_unique<EventLoopPool>(loop_)},
       acceptorp_{std::make_unique<Acceptor>(loop, addr)} {
     LOG_INFO << "TcpServer(" << this << ") created";
     acceptorp_->SetNewConnCallback(
@@ -29,8 +31,13 @@ TcpServer::~TcpServer() {
     }
 }
 
+void TcpServer::SetThreadNum(int n) {
+    loop_poolp_->SetThreadNum(n);
+}
+
 void TcpServer::Start() {
     LOG_INFO << "TcpServer(" << this << ") starts";
+    loop_poolp_->Start();
     // TODO: If the server destructs before the execution of this task,
     // acceptorp_ will be invalid.
     loop_.RunInLoop([&]() { acceptorp_->Listen(); });
@@ -38,14 +45,15 @@ void TcpServer::Start() {
 
 void TcpServer::HandleNewConn(int sk, const InetAddr& peer_addr) {
     loop_.AssertInLoopThread();
-    TcpConnPtr connp = std::make_shared<TcpConn>(loop_, sk, peer_addr);
+    EventLoop& conn_loop = loop_poolp_->GetNextLoop();
+    TcpConnPtr connp = std::make_shared<TcpConn>(conn_loop, sk, peer_addr);
     connp->SetConnectedCallback(connnected_cb_);
     connp->SetDisconnectedCallback(disconnected_cb_);
     connp->SetRecvCallback(recv_cb_);
     connp->SetWriteCompCallback(write_comp_cb_);
     connp->SetCloseCallback(std::bind(&TcpServer::HandleConnClose, this, _1));
     conns_.emplace(sk, connp);
-    loop_.RunInLoop([=]() { connp->OnConnected(); });
+    conn_loop.RunInLoop([=]() { connp->OnConnected(); });
 }
 
 void TcpServer::HandleConnClose(TcpConnPtr connp) {

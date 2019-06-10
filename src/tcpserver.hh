@@ -12,6 +12,7 @@ namespace axs {
 
 // Forward declaration.
 class EventLoop;
+class EventLoopPool;
 class Acceptor;
 class InetAddr;
 
@@ -20,6 +21,10 @@ public:
     TcpServer(EventLoop& loop, const InetAddr& addr);
     ~TcpServer();
 
+    // 0 means that all I/O will be done in the provided loop.
+    // n means that all new connections will be assigned to the loop pool of
+    // size n in a round-robin way.
+    void SetThreadNum(int n);
     void Start();
 
     // Callback setters.
@@ -37,6 +42,7 @@ private:
     void HandleConnCloseInLoop(TcpConnPtr connp);
 
     EventLoop& loop_;
+    std::unique_ptr<EventLoopPool> loop_poolp_;
     std::unique_ptr<Acceptor> acceptorp_;
     // Socket - TcpConnPtr map.
     std::map<int, TcpConnPtr> conns_;
