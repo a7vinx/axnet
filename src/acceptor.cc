@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "acceptor.hh"
 #include "eventloop.hh"
 #include "util/log.hh"
@@ -16,6 +18,7 @@ Acceptor::Acceptor(EventLoop& loop, const InetAddr& addr)
 }
 
 Acceptor::~Acceptor() {
+    loop_.AssertInLoopThread();
     poll_fd_.RemoveFromLoop();
 }
 
@@ -31,13 +34,8 @@ void Acceptor::HandleAccept() {
         // TODO: The idle file trick seems not perfect so maybe a soft limit
         // should be used?
     } else {
-        if (new_conn_cb_) {
-            new_conn_cb_(conn_pair.first, conn_pair.second);
-        } else {
-            LOG_INFO << "Accepted socket " << conn_pair.first
-                     << " but no callback function is registered to handle it";
-            ::close(conn_pair.first);
-        }
+        assert(new_conn_cb_);
+        new_conn_cb_(conn_pair.first, conn_pair.second);
     }
 }
 
