@@ -15,7 +15,7 @@ TcpConn::TcpConn(EventLoop& loop, int sk, const InetAddr& peer_addr)
       sk_opp_{std::make_unique<SocketOp>(sk)},
       local_addr_{sk_opp_->GetLocalAddr()},
       peer_addr_{peer_addr} {
-    LOG_INFO << "TcpConn(" << this << ") created";
+    LOG_DEBUG << "TcpConn(" << this << ") created";
     sk_opp_->SetKeepAlive(true);
     fdp_->SetReadCallback([&]() { HandleRecv(); });
     fdp_->SetWriteCallback([&]() { HandleSend(); });
@@ -23,7 +23,7 @@ TcpConn::TcpConn(EventLoop& loop, int sk, const InetAddr& peer_addr)
 }
 
 TcpConn::~TcpConn() {
-    LOG_INFO << "TcpConn(" << this << ") destructs";
+    LOG_DEBUG << "TcpConn(" << this << ") destructs";
     loop_.AssertInLoopThread();
     assert(state_ == ConnState::kDisconnected);
     fdp_->RemoveFromLoop();
@@ -70,7 +70,10 @@ void TcpConn::Shutdown() {
 }
 
 void TcpConn::OnConnected() {
-    LOG_INFO << "TcpConn(" << this << ") connected";
+    LOG_INFO << "TcpConn(" << this << ") connected - Local address: "
+             << local_addr_.Ip() << ":" << local_addr_.Port()
+             << " Peer address: " << peer_addr_.Ip() << ":"
+             << peer_addr_.Port();
     loop_.AssertInLoopThread();
     state_ = ConnState::kConnected;
     fdp_->EnableReading();
@@ -91,6 +94,8 @@ void TcpConn::OnDisconnected() {
 }
 
 void TcpConn::SendInLoop(const std::string& msg) {
+    LOG_DEBUG << "TcpConn(" << this << ") sends messages - backlog: "
+              << send_buf_.ReadableSize() << " bytes";
     loop_.AssertInLoopThread();
     // Due to the Gatekeeper Send(), if the state is kDisconnecting, this
     // message must come before Shutdown().
@@ -131,8 +136,10 @@ void TcpConn::ForceCloseInLoop() {
 
 void TcpConn::ShutdownInLoop() {
     loop_.AssertInLoopThread();
-    if (!fdp_->IsWriting())
+    if (!fdp_->IsWriting()) {
+        LOG_INFO << "TcpConn(" << this << ") is shut down for writing";
         sk_opp_->ShutdownWrite();
+    }
 }
 
 void TcpConn::HandleRecv() {
@@ -140,6 +147,7 @@ void TcpConn::HandleRecv() {
     recv_buf_.ReserveWritable(65536);
     int n = sk_opp_->Recv(recv_buf_.WritableBegin(), recv_buf_.WritableSize());
     if (n > 0) {
+        LOG_DEBUG << "TcpConn(" << this << ") received messages";
         assert(recv_cb_);
         recv_buf_.Written(n);
         recv_cb_(shared_from_this(), recv_buf_.RetrieveAll());
@@ -151,6 +159,8 @@ void TcpConn::HandleRecv() {
 }
 
 void TcpConn::HandleSend() {
+    LOG_DEBUG << "TcpConn(" << this << ") sends messages - backlog: "
+              << send_buf_.ReadableSize() << " bytes";
     loop_.AssertInLoopThread();
     int n = sk_opp_->Send(send_buf_.ReadableBegin(), send_buf_.ReadableSize());
     n = n > 0 ? n : 0;
@@ -165,6 +175,7 @@ void TcpConn::HandleSend() {
 }
 
 void TcpConn::HandleClose() {
+    LOG_INFO << "TcpConn(" << this << ") is closed";
     loop_.AssertInLoopThread();
     state_ = ConnState::kDisconnected;
     fdp_->DisableRw();

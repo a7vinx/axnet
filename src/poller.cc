@@ -23,7 +23,7 @@ std::vector<PollFd*> Poller::Poll(int timeout) {
     if (ready_num < 0 && errno != EINTR)
         LOG_FATAL << "epoll_wait() failed with errno " << errno
                   << ": " << StrError(errno);
-    LOG_INFO << "Poll: " << ready_num << " events ready";
+    LOG_DEBUG << "Poll: " << ready_num << " events ready";
     // Prepare ready fds.
     std::vector<PollFd*> ready_fds{};
     for (int i = 0; i < ready_num; ++i) {
@@ -60,8 +60,8 @@ void Poller::RemoveFd(PollFd* fdp) {
 }
 
 void Poller::EpollCtl(int op, PollFd* fdp) {
-    LOG_INFO << "Poller: " << EpollOpToStr(op) << " fd " << fdp->Fd()
-             << " with events: " << fdp->EventsToStr();
+    LOG_DEBUG << "Poller: " << EpollOpToStr(op) << " fd " << fdp->Fd()
+              << " with events: " << fdp->EventsToStr();
     struct epoll_event event;
     event.events = fdp->Events();
     event.data.ptr = fdp;

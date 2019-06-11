@@ -44,6 +44,8 @@ void TcpServer::Start() {
 }
 
 void TcpServer::HandleNewConn(int sk, const InetAddr& peer_addr) {
+    LOG_DEBUG << "TcpServer(" << this << ") handle new connection comes from "
+              << peer_addr.Ip() << ":" << peer_addr.Port();
     loop_.AssertInLoopThread();
     EventLoop& conn_loop = loop_poolp_->GetNextLoop();
     TcpConnPtr connp = std::make_shared<TcpConn>(conn_loop, sk, peer_addr);
@@ -62,6 +64,8 @@ void TcpServer::HandleConnClose(TcpConnPtr connp) {
 }
 
 void TcpServer::HandleConnCloseInLoop(TcpConnPtr connp) {
+    LOG_DEBUG << "TcpServer(" << this << ") handle TcpConn(" << connp.get()
+              << ") closing";
     loop_.AssertInLoopThread();
     std::size_t erased = conns_.erase(connp->SocketFd());
     assert(erased == 1);

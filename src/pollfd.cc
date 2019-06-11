@@ -14,7 +14,7 @@ PollFd::~PollFd() {
 
 void PollFd::HandleEvent() {
     event_handling_ = true;
-    LOG_INFO << "Handle event: " << EventsToStr() << "on fd: " << fd_;
+    LOG_DEBUG << "Handle event: " << EventsToStr() << "on fd: " << fd_;
     if (revents_ & EPOLLERR) {
         if (err_cb_) err_cb_();
     }
