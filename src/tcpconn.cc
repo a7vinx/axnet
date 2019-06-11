@@ -162,6 +162,13 @@ void TcpConn::HandleSend() {
     LOG_DEBUG << "TcpConn(" << this << ") sends messages - backlog: "
               << send_buf_.ReadableSize() << " bytes";
     loop_.AssertInLoopThread();
+    // Same as what we do in SendInLoop() and the writing event will be disabled
+    // in HandleClose().
+    if (state_ == ConnState::kDisconnected) {
+        LOG_WARN << "TcpConn(" << this << ") disconnected, "
+                 << "discard unsent buffer";
+        return;
+    }
     int n = sk_opp_->Send(send_buf_.ReadableBegin(), send_buf_.ReadableSize());
     n = n > 0 ? n : 0;
     send_buf_.Read(n);
