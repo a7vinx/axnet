@@ -110,7 +110,7 @@ void TcpConn::SendInLoop(const std::string& msg) {
         int n = sk_opp_->Send(msg.c_str(), msg.size());
         if (n == msg.size()) {
             if (state_ == ConnState::kDisconnecting)
-                sk_opp_->ShutdownWrite();
+                ShutdownInLoop();
             if (write_comp_cb_)
                 write_comp_cb_(shared_from_this());
             return;
@@ -171,14 +171,14 @@ void TcpConn::HandleSend() {
     }
     int n = sk_opp_->Send(send_buf_.ReadableBegin(), send_buf_.ReadableSize());
     n = n > 0 ? n : 0;
-    send_buf_.Read(n);
     if (n == send_buf_.ReadableSize()) {
         fdp_->DisableWriting();
         if (state_ == ConnState::kDisconnecting)
-            sk_opp_->ShutdownWrite();
+            ShutdownInLoop();
         if (write_comp_cb_)
             write_comp_cb_(shared_from_this());
     }
+    send_buf_.Read(n);
 }
 
 void TcpConn::HandleClose() {
