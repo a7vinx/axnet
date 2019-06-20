@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <cassert>
 
 #include "pollfd.hh"
 #include "eventloop.hh"
@@ -8,8 +9,9 @@ namespace axs {
 
 PollFd::~PollFd() {
     assert(!event_handling_);
-    assert(!is_in_loop);
-    ::close(fd_);
+    assert(!is_in_loop_);
+    if (!fd_detached_)
+        ::close(fd_);
 }
 
 void PollFd::HandleEvent() {
@@ -31,13 +33,18 @@ void PollFd::HandleEvent() {
 
 void PollFd::RemoveFromLoop() {
     loop_.AssertInLoopThread();
-    is_in_loop = false;
+    is_in_loop_ = false;
     loop_.RemovePollFd(this);
+}
+
+int PollFd::DetachFd() {
+    fd_detached_ = true;
+    return fd_;
 }
 
 void PollFd::NotifyLoop() {
     loop_.AssertInLoopThread();
-    is_in_loop = true;
+    is_in_loop_ = true;
     loop_.UpdatePollFd(this);
 }
 

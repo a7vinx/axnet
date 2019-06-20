@@ -31,6 +31,7 @@ public:
     void DisableReading() { events_ &= ~kETRead; NotifyLoop(); }
     void EnableWriting() { events_ |= kETWrite; NotifyLoop(); }
     void DisableWriting() { events_ &= ~kETWrite; NotifyLoop(); }
+    void DisableRw() { events_ = 0; NotifyLoop(); }
     bool IsReading() const { return events_ & kETRead; }
     bool IsWriting() const { return events_ & kETWrite; }
     bool CareNoEvent() const { return events_ == 0; }
@@ -42,7 +43,12 @@ public:
 
     // Non-trivial member functions.
     void HandleEvent();
+    // Split it from destructor because we need to ensure that the poller
+    // is still valid which can't be guaranteed during the destruction of
+    // owner loop.
     void RemoveFromLoop();
+    // Detach the life cycle of fd.
+    int DetachFd();
 
 private:
     enum EventType {
@@ -61,7 +67,8 @@ private:
     EventCallback write_cb_{};
     EventCallback err_cb_{};
     bool event_handling_{false};
-    bool is_in_loop{false};
+    bool is_in_loop_{false};
+    bool fd_detached_{false};
 };
 
 }
