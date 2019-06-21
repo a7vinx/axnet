@@ -32,23 +32,36 @@ std::pair<int, InetAddr> SocketOp::Accept() {
     return {sk, addr};
 }
 
-void SocketOp::Connect(const InetAddr& addr) {
-    if (::connect(sk_, addr.SockAddr(), addr.SockAddrLen()) < 0)
+// Errno has to be returned.
+int SocketOp::Connect(const InetAddr& addr) {
+    int ret = ::connect(sk_, addr.SockAddr(), addr.SockAddrLen());
+    if (ret < 0 && errno != EINPROGRESS)
         LOG_ERROR << "Socket " << sk_ << " failed to connect to address "
                   << addr.Ip() << ":" << addr.Port() << " with errno "
                   << errno << " : " << StrError(errno);
+    return ret < 0 ? errno : 0;
 }
 
-void SocketOp::Recv(void* buf, std::size_t size) {
-    if (::recv(sk_, buf, size, 0) < 0)
+ssize_t SocketOp::Recv(void* buf, std::size_t size) {
+    ssize_t n = ::recv(sk_, buf, size, 0);
+    if (n < 0)
         LOG_ERROR << "Recv() on socket " << sk_ << " failed with errno "
                   << errno << " : " << StrError(errno);
+    return n;
 }
 
-void SocketOp::Send(void* buf, std::size_t size) {
-    if (::send(sk_, buf, size, 0) < 0)
+ssize_t SocketOp::Send(const void* buf, std::size_t size) {
+    ssize_t n = ::send(sk_, buf, size, 0);
+    if (n < 0)
         LOG_ERROR << "Send() on socket " << sk_ << " failed with errno "
                   << errno << " : " << StrError(errno);
+    return n;
+}
+
+void SocketOp::ShutdownWrite() {
+    if (::shutdown(sk_, SHUT_WR) < 0)
+        LOG_ERROR << "Failed to shut down writing on socket " << sk_
+                  << " with errno " << errno << " : " << StrError(errno);
 }
 
 void SocketOp::SetTcpNoDelay(bool val) {
@@ -85,6 +98,52 @@ void SocketOp::SetKeepAlive(bool val) {
     if (ret < 0)
         LOG_ERROR << "SetKeepAlive() on socket " << sk_
                   << " failed with errno " << errno << " : " << StrError(errno);
+}
+
+InetAddr SocketOp::GetLocalAddr() const {
+    InetAddr local_addr{};
+    socklen_t addr_len = local_addr.SockAddrLen();
+    if (::getsockname(sk_, local_addr.SockAddr(), &addr_len) < 0)
+        LOG_ERROR << "Failed to get local address on socket " << sk_
+                  << " with errno " << errno << " : " << StrError(errno);
+    return local_addr;
+}
+
+InetAddr SocketOp::GetPeerAddr() const {
+    InetAddr peer_addr{};
+    socklen_t addr_len = peer_addr.SockAddrLen();
+    if (::getpeername(sk_, peer_addr.SockAddr(), &addr_len) < 0)
+        LOG_ERROR << "Failed to get peer address on socket " << sk_
+                  << " with errno " << errno << " : " << StrError(errno);
+    return peer_addr;
+}
+
+int SocketOp::GetError() const {
+    int val_int;
+    socklen_t val_len = static_cast<socklen_t>(sizeof(val_int));
+    if (::getsockopt(sk_, SOL_SOCKET, SO_ERROR, &val_int, &val_len) < 0) {
+        LOG_ERROR << "Failed to get socket error on socket " << sk_
+                  << " with errno " << errno << " : " << StrError(errno);
+        return 0;
+    } else {
+        return val_int;
+    }
+}
+
+bool SocketOp::IsSelfConn() const {
+    InetAddr local_addr = GetLocalAddr();
+    InetAddr peer_addr = GetPeerAddr();
+    return local_addr.Port() == peer_addr.Port() &&
+           local_addr.Ip() == peer_addr.Ip();
+}
+
+int NonBlockTcpSocket() {
+    int sk = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC,
+                      IPPROTO_TCP);
+    if (sk < 0)
+        LOG_FATAL << "Failed to create socket with errno " << errno << " : "
+                  << StrError(errno);
+    return sk;
 }
 
 }
