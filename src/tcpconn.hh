@@ -25,6 +25,7 @@ public:
     using CloseCallback = std::function<void(TcpConnPtr)>;
 
     TcpConn(EventLoop& loop, int sk, const InetAddr& peer_addr);
+    TcpConn(EventLoop& loop, int sk);
     ~TcpConn();
 
     // Trivial getters.

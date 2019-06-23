@@ -22,6 +22,9 @@ TcpConn::TcpConn(EventLoop& loop, int sk, const InetAddr& peer_addr)
     fdp_->SetErrorCallback([&]() { HandleError(); });
 }
 
+TcpConn::TcpConn(EventLoop& loop, int sk)
+    : TcpConn{loop, sk, SocketOp{sk}.GetPeerAddr()} {}
+
 TcpConn::~TcpConn() {
     LOG_DEBUG << "TcpConn(" << this << ") destructs";
     loop_.AssertInLoopThread();
@@ -154,6 +157,8 @@ void TcpConn::HandleRecv() {
     } else if (n == 0) {
         HandleClose();
     } else {
+        // This should never be reached?
+        assert(false);
         HandleError();
     }
 }
