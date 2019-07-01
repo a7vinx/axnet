@@ -56,7 +56,7 @@ void StartServer(int thread_num, EventLoop** loop_addrp) {
     EventLoop server_main_loop{};
     *loop_addrp = &server_main_loop;
     TcpServer server{server_main_loop, server_addr};
-    server.SetThreadNum(thread_num - 1);
+    server.SetThreadNum(thread_num);
     server.SetRecvCallback(ServerEcho);
     server.Start();
     server_main_loop.Loop();
@@ -121,18 +121,20 @@ void ClientCtl(int thread_num, int conn_num, std::size_t block_size) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 4) {
-        std::cout << "Usage: pingpong_test <thread_num> <connection_num> "
+    if (argc != 5) {
+        std::cout << "Usage: pingpong_test <server_thread_num> "
+                  << "<client_thread_num> <connection_num> "
                   << "<block_size>" << std::endl;
         return 1;
     }
-    int thread_num = std::atoi(argv[1]);
-    int conn_num = std::atoi(argv[2]);
-    std::size_t block_size = std::atoll(argv[3]);
-    std::thread server_ctl_thread{ServerCtl, thread_num};
+    int server_thread_num = std::atoi(argv[1]);
+    int client_thread_num = std::atoi(argv[2]);
+    int conn_num = std::atoi(argv[3]);
+    std::size_t block_size = std::atoll(argv[4]);
+    std::thread server_ctl_thread{ServerCtl, server_thread_num};
     // Leave 1s for server's starting.
     std::this_thread::sleep_for(1s);
-    std::thread client_ctl_thread{ClientCtl, thread_num, conn_num, block_size};
+    std::thread client_ctl_thread{ClientCtl, client_thread_num, conn_num, block_size};
     server_ctl_thread.join();
     client_ctl_thread.join();
     return 0;
