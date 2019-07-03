@@ -11,7 +11,7 @@
 #include "pollfd.hh"
 #include "util/log.hh"
 
-namespace axs {
+namespace axn {
 
 namespace {
 

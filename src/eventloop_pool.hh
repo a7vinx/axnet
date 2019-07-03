@@ -1,5 +1,5 @@
-#ifndef _AXS_EVENTLOOP_POOL_HH_
-#define _AXS_EVENTLOOP_POOL_HH_
+#ifndef _AXN_EVENTLOOP_POOL_HH_
+#define _AXN_EVENTLOOP_POOL_HH_
 
 #include <vector>
 #include <mutex>
@@ -8,7 +8,7 @@
 #include <thread>
 #include <boost/core/noncopyable.hpp>
 
-namespace axs {
+namespace axn {
 
 // Forward declaration.
 class EventLoop;

@@ -1,11 +1,11 @@
-#ifndef _AXS_SOCKETOP_HH_
-#define _AXS_SOCKETOP_HH_
+#ifndef _AXN_SOCKETOP_HH_
+#define _AXN_SOCKETOP_HH_
 
 #include <utility>
 #include <cstdlib>
 #include <sys/types.h>
 
-namespace axs {
+namespace axn {
 
 // Forward declaration.
 class InetAddr;

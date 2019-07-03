@@ -1,12 +1,12 @@
-#ifndef _AXS_POLLFD_HH_
-#define _AXS_POLLFD_HH_
+#ifndef _AXN_POLLFD_HH_
+#define _AXN_POLLFD_HH_
 
 #include <string>
 #include <functional>
 #include <boost/core/noncopyable.hpp>
 #include <sys/epoll.h>
 
-namespace axs {
+namespace axn {
 
 // Forward declaration.
 class EventLoop;

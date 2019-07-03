@@ -4,7 +4,7 @@
 #include "eventloop.hh"
 #include "util/log.hh"
 
-namespace axs {
+namespace axn {
 
 Acceptor::Acceptor(EventLoop& loop, const InetAddr& addr)
     : loop_{loop},

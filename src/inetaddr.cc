@@ -4,7 +4,7 @@
 #include "inetaddr.hh"
 #include "util/log.hh"
 
-namespace axs {
+namespace axn {
 
 static_assert(sizeof(InetAddr) == sizeof(struct sockaddr_in),
               "InetAddr and struct sockaddr_in are different sizes");

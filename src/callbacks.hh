@@ -1,11 +1,11 @@
-#ifndef _AXS_CALLBACKS_HH_
-#define _AXS_CALLBACKS_HH_
+#ifndef _AXN_CALLBACKS_HH_
+#define _AXN_CALLBACKS_HH_
 
 #include <functional>
 #include <memory>
 #include <string>
 
-namespace axs {
+namespace axn {
 
 class TcpConn;
 using TcpConnPtr = std::shared_ptr<TcpConn>;

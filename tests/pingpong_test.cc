@@ -13,7 +13,7 @@
 #include "tcpclient.hh"
 #include "tcpconn.hh"
 
-using namespace axs;
+using namespace axn;
 using namespace std::chrono_literals;
 using std::placeholders::_1;
 using std::placeholders::_2;

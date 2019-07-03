@@ -1,12 +1,12 @@
-#ifndef _AXS_TCPCLIENT_HH_
-#define _AXS_TCPCLIENT_HH_
+#ifndef _AXN_TCPCLIENT_HH_
+#define _AXN_TCPCLIENT_HH_
 
 #include <memory>
 #include <boost/core/noncopyable.hpp>
 
 #include "callbacks.hh"
 
-namespace axs {
+namespace axn {
 
 // Forward declaration.
 class EventLoop;

@@ -1,5 +1,5 @@
-#ifndef _AXS_EVENTLOOP_HH_
-#define _AXS_EVENTLOOP_HH_
+#ifndef _AXN_EVENTLOOP_HH_
+#define _AXN_EVENTLOOP_HH_
 
 #include <vector>
 #include <thread>
@@ -9,7 +9,7 @@
 #include <atomic>
 #include <boost/core/noncopyable.hpp>
 
-namespace axs {
+namespace axn {
 
 // Forward declaration.
 class PollFd;

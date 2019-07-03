@@ -1,5 +1,5 @@
-#ifndef _AXS_THREADPOOL_HH_
-#define _AXS_THREADPOOL_HH_
+#ifndef _AXN_THREADPOOL_HH_
+#define _AXN_THREADPOOL_HH_
 
 #include <functional>
 #include <deque>
@@ -10,7 +10,7 @@
 #include <thread>
 #include <boost/core/noncopyable.hpp>
 
-namespace axs {
+namespace axn {
 
 class ThreadPool : private boost::noncopyable {
 public:

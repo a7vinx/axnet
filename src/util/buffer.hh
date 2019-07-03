@@ -1,11 +1,11 @@
-#ifndef _AXS_BUFFER_HH_
-#define _AXS_BUFFER_HH_
+#ifndef _AXN_BUFFER_HH_
+#define _AXN_BUFFER_HH_
 
 #include <string>
 #include <vector>
 #include <cstdlib>
 
-namespace axs {
+namespace axn {
 
 class Buffer {
 public:

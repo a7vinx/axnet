@@ -3,7 +3,7 @@
 #include "eventloop_pool.hh"
 #include "eventloop.hh"
 
-namespace axs {
+namespace axn {
 
 EventLoopPool::~EventLoopPool() {
     // std::thread can only be destructed after being joined or detached.

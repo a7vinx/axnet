@@ -1,5 +1,5 @@
-#ifndef _AXS_POLLER_HH_
-#define _AXS_POLLER_HH_
+#ifndef _AXN_POLLER_HH_
+#define _AXN_POLLER_HH_
 
 #include <string>
 #include <map>
@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <sys/epoll.h>
 
-namespace axs {
+namespace axn {
 
 // Forward declaration.
 class EventLoop;

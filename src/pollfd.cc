@@ -5,7 +5,7 @@
 #include "eventloop.hh"
 #include "util/log.hh"
 
-namespace axs {
+namespace axn {
 
 PollFd::~PollFd() {
     assert(!event_handling_);

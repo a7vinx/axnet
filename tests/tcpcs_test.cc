@@ -7,7 +7,7 @@
 #include "tcpserver.hh"
 #include "tcpconn.hh"
 
-using namespace axs;
+using namespace axn;
 
 void ClientConnected(TcpConnPtr connp) {
     connp->Send("hello");

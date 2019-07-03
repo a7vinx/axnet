@@ -9,7 +9,7 @@
 #include "socketop.hh"
 #include "util/log.hh"
 
-namespace axs {
+namespace axn {
 
 using std::placeholders::_1;
 

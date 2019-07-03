@@ -1,5 +1,5 @@
-#ifndef _AXS_TCPSERVER_HH_
-#define _AXS_TCPSERVER_HH_
+#ifndef _AXN_TCPSERVER_HH_
+#define _AXN_TCPSERVER_HH_
 
 #include <map>
 #include <memory>
@@ -8,7 +8,7 @@
 #include "callbacks.hh"
 #include "tcpconn.hh"
 
-namespace axs {
+namespace axn {
 
 // Forward declaration.
 class EventLoop;

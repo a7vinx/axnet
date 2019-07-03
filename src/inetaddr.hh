@@ -1,12 +1,12 @@
-#ifndef _AXS_INETADDR_HH_
-#define _AXS_INETADDR_HH_
+#ifndef _AXN_INETADDR_HH_
+#define _AXN_INETADDR_HH_
 
 #include <string>
 #include <cstdlib>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-namespace axs {
+namespace axn {
 
 class InetAddr {
 public:

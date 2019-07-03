@@ -7,7 +7,7 @@
 #include "socketop.hh"
 #include "util/log.hh"
 
-namespace axs {
+namespace axn {
 
 TcpConn::TcpConn(EventLoop& loop, int sk, const InetAddr& peer_addr)
     : loop_{loop},

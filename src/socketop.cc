@@ -6,7 +6,7 @@
 #include "inetaddr.hh"
 #include "util/log.hh"
 
-namespace axs {
+namespace axn {
 
 void SocketOp::Bind(const InetAddr& addr) {
     if (::bind(sk_, addr.SockAddr(), addr.SockAddrLen()) < 0)

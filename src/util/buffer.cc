@@ -2,7 +2,7 @@
 
 #include "buffer.hh"
 
-namespace axs {
+namespace axn {
 
 void Buffer::Append(const char* p, std::size_t n) {
     if (WritableSize() < n)

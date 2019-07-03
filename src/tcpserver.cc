@@ -9,7 +9,7 @@
 #include "inetaddr.hh"
 #include "util/log.hh"
 
-namespace axs {
+namespace axn {
 
 using std::placeholders::_1;
 using std::placeholders::_2;

@@ -9,7 +9,7 @@
 
 #include "log.hh"
 
-namespace axs {
+namespace axn {
 
 namespace log = boost::log;
 namespace log_src = boost::log::sources;
@@ -18,10 +18,10 @@ namespace log_kw = boost::log::keywords;
 namespace log_expr = boost::log::expressions;
 namespace log_attr = boost::log::attributes;
 
-BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(axs_logger_tag,
+BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(axn_logger_tag,
                                        log_src::severity_logger_mt<SevLevel>)
 
-log_src::severity_logger_mt<SevLevel>& axs_logger = axs_logger_tag::get();
+log_src::severity_logger_mt<SevLevel>& axn_logger = axn_logger_tag::get();
 
 log::formatting_ostream& operator<<(
     log::formatting_ostream& strm,
@@ -59,7 +59,7 @@ public:
     LogCore() {
         using sink_t = log_sink::asynchronous_sink<log_sink::text_file_backend>;
         auto backendp = boost::make_shared<log_sink::text_file_backend>(
-                            log_kw::file_name = "axs_%Y_%m_%d.log",
+                            log_kw::file_name = "axn_%Y_%m_%d.log",
                             log_kw::rotation_size = 5 * 1024 * 2014,
                             log_kw::time_based_rotation =
                                 log_sink::file::rotation_at_time_point(12, 0, 0)

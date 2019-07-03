@@ -1,6 +1,6 @@
 #include "threadpool.hh"
 
-namespace axs {
+namespace axn {
 
 ThreadPool::~ThreadPool() {
     if (running_)

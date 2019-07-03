@@ -4,7 +4,7 @@
 #include "util/buffer.hh"
 
 void buffer_test() {
-    axs::Buffer buf(256);
+    axn::Buffer buf(256);
     // Initial state.
     assert(buf.ReadableSize() == 0);
     assert(buf.WritableSize() == 256);

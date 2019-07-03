@@ -7,7 +7,7 @@
 #include "tcpserver.hh"
 #include "tcpconn.hh"
 
-using namespace axs;
+using namespace axn;
 using std::placeholders::_1;
 using std::placeholders::_2;
 

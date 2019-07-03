@@ -5,7 +5,7 @@
 #include "eventloop.hh"
 #include "pollfd.hh"
 
-using namespace axs;
+using namespace axn;
 
 void AssertInOtherThread(EventLoop* lp) {
     lp->AssertInLoopThread();

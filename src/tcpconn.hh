@@ -1,5 +1,5 @@
-#ifndef _AXS_TCPCONN_HH_
-#define _AXS_TCPCONN_HH_
+#ifndef _AXN_TCPCONN_HH_
+#define _AXN_TCPCONN_HH_
 
 #include <memory>
 #include <string>
@@ -10,7 +10,7 @@
 #include "inetaddr.hh"
 #include "util/buffer.hh"
 
-namespace axs {
+namespace axn {
 
 // Forward declaration
 class EventLoop;
