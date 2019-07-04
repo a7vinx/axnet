@@ -23,6 +23,8 @@ extern boost::log::sources::severity_logger_mt<SevLevel>& axn_logger;
 #define LOG_FATAL \
     for (;; LogFlush(), std::abort()) BOOST_LOG_SEV(axn::axn_logger, axn::SevLevel::kFatal)
 
+void EnableLog();
+void DisableLog();
 void LogFlush();
 
 // Wrapper of strerror_r().

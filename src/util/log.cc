@@ -43,6 +43,14 @@ log::formatting_ostream& operator<<(
     return strm;
 }
 
+void EnableLog() {
+    log::core::get()->set_logging_enabled(true);
+}
+
+void DisableLog() {
+    log::core::get()->set_logging_enabled(false);
+}
+
 void LogFlush() {
     log::core::get()->flush();
 }
@@ -78,6 +86,7 @@ public:
         corep->add_global_attribute("Tid", log_attr::current_thread_id());
         corep->add_global_attribute("TimeStamp", log_attr::local_clock());
         corep->add_sink(sinkp);
+        corep->set_logging_enabled(false);
     }
     ~LogCore() { LogFlush(); }
 };
