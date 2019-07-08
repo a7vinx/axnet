@@ -59,12 +59,14 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::AssertInLoopThread() {
+#ifndef NDEBUG
     if (!IsInLoopThread())
         LOG_FATAL << "EventLoop::AssertInLoopThread() Failed - "
                   << "The thread id of EventLoop: "
                   << boost::format("%#018x") % thread_id_
                   << " Current thread id: "
                   << boost::format("%#018x") % std::this_thread::get_id();
+#endif
 }
 
 void EventLoop::UpdatePollFd(PollFd* fdp) {
